@@ -5,10 +5,11 @@ class event:
     """Class for managing real life events"""
     
     title : str
-    e_date : dt.date
     s_date : dt.date
-    e_time : dt.time
+    e_date : dt.date
     s_time : dt.time
+    e_time : dt.time
+
     id : int = None
     description : str = ""
     category_id : int = 0       
