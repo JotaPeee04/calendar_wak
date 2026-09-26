@@ -1,6 +1,8 @@
 import datetime as dt
+import random
 from src.models.event import event
 from src.storage.db import init_db, insert_event, fetch_events, update_event, delete_event
+from src.ui.main_window import *
 
 def test():
     #inicializo db
@@ -50,5 +52,46 @@ def test():
     eventos_finales = fetch_events()
     print(f"Cantidad de eventos en la BD tras borrar: {len(eventos_finales)}")
 
+def seed_test_events():
+    """Genera eventos aleatorios para pruebas en la base de datos."""
+    init_db()  # Aseguramos que la tabla exista antes de insertar
+    
+    today = dt.date.today()
+    sample_titles = ["Reunión de trabajo", "Cita médica", "Gimnasio", "Proyecto Python", "Cumpleaños", "Comprar víveres"]
+    categories = [1, 2, 3]
+
+    for i in range(10):
+        days_offset = random.randint(-15, 15)
+        event_date = today + dt.timedelta(days=days_offset)
+        
+        title = random.choice(sample_titles)
+        description = f"Descripción de prueba para {title}"
+        s_time = dt.time(random.randint(8, 18), 0)
+        e_time = dt.time(s_time.hour + 1, 0)
+        cat_id = random.choice(categories)
+
+        # Crear la instancia del evento
+        nuevo_evento = event(
+            title=title,
+            description=description,
+            s_date=event_date,
+            e_date=event_date,
+            s_time=s_time,
+            e_time=e_time,
+            category_id=cat_id
+        )
+        
+        # Guardarlo en SQLite
+        insert_event(nuevo_evento)
+
+    print("¡Eventos de prueba insertados con éxito!")
+
 if __name__ == "__main__":
-    test()
+    # 1. Poblamos la base de datos con eventos aleatorios
+    seed_test_events()
+
+    # 2. Iniciamos la aplicación PySide6
+    app = QApplication([])
+    window = MainWindow()
+    window.show()
+    app.exec()

@@ -23,10 +23,14 @@ def insert_event(event):
     conn.commit()
     conn.close()
 
-def fetch_events() -> list:
+def fetch_events(selected_date=None) -> list:
     conn = sqlite3.connect('data/eventos.db')
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM events")
+    if selected_date:
+        cursor.execute("SELECT * FROM events WHERE s_date=?",(selected_date.isoformat(),))
+    else:
+
+        cursor.execute("SELECT * FROM events")
     fetched = cursor.fetchall()
     ls = []
     for e in fetched:
@@ -34,6 +38,8 @@ def fetch_events() -> list:
         ls.append(ev)
     conn.close()
     return ls
+
+
 
 def update_event(event):
     conn = sqlite3.connect('data/eventos.db')
